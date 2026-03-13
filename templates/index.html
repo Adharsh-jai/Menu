@@ -78,6 +78,50 @@
         <p>&copy; 2026 La Maison Restaurant. All rights reserved.</p>
     </footer>
 
+
+    <!-- ═══ FLOATING CART FAB ═══ -->
+    <button id="cartFab" class="cart-fab hidden">
+        🛒 <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+
+    <!-- ═══ CART DRAWER ═══ -->
+    <div id="cartOverlay" class="cart-overlay hidden">
+        <div class="cart-drawer" id="cartDrawer">
+            <div class="cart-header">
+                <h3>Your Order</h3>
+                <button class="cart-close" id="cartClose">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- populated by JS -->
+            </div>
+            <div class="cart-empty hidden" id="cartEmpty">
+                <span>🛒</span><p>Your cart is empty</p>
+            </div>
+            <div class="cart-footer" id="cartFooter">
+                <div class="cart-total">
+                    <span>Total</span>
+                    <strong id="cartTotal">₹0.00</strong>
+                </div>
+                <div class="cart-form">
+                    <input type="text" id="custName" class="cart-input" placeholder="Your Name *" required>
+                    <input type="tel" id="custPhone" class="cart-input" placeholder="Phone (optional)">
+                </div>
+                <button class="btn-order" id="placeOrderBtn">Place Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ ORDER SUCCESS ═══ -->
+    <div id="orderSuccess" class="order-success-overlay hidden">
+        <div class="order-success-card">
+            <div class="success-icon">✅</div>
+            <h3>Order Placed!</h3>
+            <p>Order <strong>#<span id="orderIdDisplay"></span></strong></p>
+            <p class="success-total">Total: <strong id="orderTotalDisplay">₹0</strong></p>
+            <button class="btn-order" id="successClose">Done</button>
+        </div>
+    </div>
+
     <script src="/static/js/main.js"></script>
 </body>
 </html>

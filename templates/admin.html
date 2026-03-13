@@ -44,6 +44,12 @@
                 <button class="nav-item" data-panel="items" id="navItems">
                     <span class="nav-icon">🍕</span> Menu Items
                 </button>
+                <button class="nav-item" data-panel="orders" id="navOrders">
+                    <span class="nav-icon">📋</span> Orders
+                </button>
+                <button class="nav-item" data-panel="analytics" id="navAnalytics">
+                    <span class="nav-icon">📊</span> Analytics
+                </button>
             </nav>
             <div class="sidebar-footer">
                 <button class="btn btn-ghost btn-full" id="logoutBtn">🚪 Logout</button>
@@ -95,6 +101,63 @@
                         <tbody id="itemsBody"></tbody>
                     </table>
                     <p class="empty-table hidden" id="emptyItems">No menu items yet. Click <strong>+ Add New</strong> to create one.</p>
+                </div>
+            </section>
+
+            <!-- ═══ ORDERS PANEL ═══ -->
+            <section class="panel hidden" id="panelOrders">
+                <div class="table-wrap">
+                    <table id="ordersTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody"></tbody>
+                    </table>
+                    <p class="empty-table hidden" id="emptyOrders">No orders yet.</p>
+                </div>
+            </section>
+
+            <!-- ═══ ANALYTICS PANEL ═══ -->
+            <section class="panel hidden" id="panelAnalytics">
+                <!-- Stat cards -->
+                <div class="stat-cards" id="statCards">
+                    <div class="stat-card">
+                        <div class="stat-label">Today's Revenue</div>
+                        <div class="stat-value" id="statRevenue">₹0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Today's Orders</div>
+                        <div class="stat-value" id="statOrders">0</div>
+                    </div>
+                    <div class="stat-card warn">
+                        <div class="stat-label">Cancelled</div>
+                        <div class="stat-value" id="statCancelled">0</div>
+                    </div>
+                </div>
+
+                <!-- Weekly chart -->
+                <div class="analytics-section">
+                    <h3>Last 7 Days</h3>
+                    <div class="chart-wrap" id="weeklyChart"></div>
+                </div>
+
+                <!-- Popular items -->
+                <div class="analytics-section">
+                    <h3>Popular Items</h3>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Item</th><th>Qty Sold</th><th>Revenue</th></tr></thead>
+                            <tbody id="popularBody"></tbody>
+                        </table>
+                        <p class="empty-table hidden" id="emptyPopular">No data yet.</p>
+                    </div>
                 </div>
             </section>
         </div>

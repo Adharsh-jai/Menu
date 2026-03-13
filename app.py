@@ -1,7 +1,9 @@
 import os
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.secret_key = 'restaurant-secret-key-change-in-production'
@@ -62,6 +64,48 @@ class MenuItem(db.Model):
             'is_available': self.is_available,
             'category_id': self.category_id,
             'category_name': self.category.name if self.category else ''
+        }
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.String(150), nullable=False)
+    customer_phone = db.Column(db.String(20), default='')
+    status = db.Column(db.String(30), default='pending')  # pending, preparing, ready, completed, cancelled
+    total = db.Column(db.Float, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    items = db.relationship('OrderItem', backref='order', lazy=True, cascade='all, delete-orphan')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'customer_name': self.customer_name,
+            'customer_phone': self.customer_phone,
+            'status': self.status,
+            'total': self.total,
+            'created_at': self.created_at.isoformat(),
+            'items': [oi.to_dict() for oi in self.items]
+        }
+
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    menu_item_id = db.Column(db.Integer, db.ForeignKey('menu_item.id'), nullable=False)
+    item_name = db.Column(db.String(150), nullable=False)
+    item_price = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, default=1)
+
+    menu_item = db.relationship('MenuItem')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'menu_item_id': self.menu_item_id,
+            'item_name': self.item_name,
+            'item_price': self.item_price,
+            'quantity': self.quantity,
+            'subtotal': self.item_price * self.quantity
         }
 
 
@@ -256,6 +300,123 @@ def delete_item(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({'success': True})
+
+
+# ─── Public: Orders ──────────────────────────────────────────────────
+
+@app.route('/api/orders', methods=['POST'])
+def place_order():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request'}), 400
+
+    customer_name = (data.get('customer_name') or '').strip()
+    customer_phone = (data.get('customer_phone') or '').strip()
+    cart_items = data.get('items', [])
+
+    if not customer_name:
+        return jsonify({'error': 'Name is required'}), 400
+    if not cart_items:
+        return jsonify({'error': 'Cart is empty'}), 400
+
+    order = Order(customer_name=customer_name, customer_phone=customer_phone)
+    total = 0
+
+    for ci in cart_items:
+        mi = MenuItem.query.get(ci.get('id'))
+        if not mi:
+            continue
+        qty = max(1, int(ci.get('quantity', 1)))
+        oi = OrderItem(item_name=mi.name, item_price=mi.price, quantity=qty, menu_item_id=mi.id)
+        order.items.append(oi)
+        total += mi.price * qty
+
+    if not order.items:
+        return jsonify({'error': 'No valid items'}), 400
+
+    order.total = total
+    db.session.add(order)
+    db.session.commit()
+    return jsonify({'success': True, 'order_id': order.id, 'total': order.total}), 201
+
+
+# ─── Admin: Orders ───────────────────────────────────────────────────
+
+@app.route('/admin/orders', methods=['GET'])
+@admin_required
+def list_orders():
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return jsonify([o.to_dict() for o in orders])
+
+
+@app.route('/admin/orders/<int:order_id>', methods=['PUT'])
+@admin_required
+def update_order_status(order_id):
+    order = Order.query.get_or_404(order_id)
+    data = request.get_json()
+    new_status = data.get('status', '').strip()
+    if new_status in ('pending', 'preparing', 'ready', 'completed', 'cancelled'):
+        order.status = new_status
+        db.session.commit()
+    return jsonify(order.to_dict())
+
+
+# ─── Admin: Analytics ────────────────────────────────────────────────
+
+@app.route('/admin/analytics', methods=['GET'])
+@admin_required
+def get_analytics():
+    today = datetime.utcnow().date()
+    start_of_day = datetime.combine(today, datetime.min.time())
+
+    # Today's orders
+    today_orders = Order.query.filter(Order.created_at >= start_of_day).all()
+    today_revenue = sum(o.total for o in today_orders if o.status != 'cancelled')
+    today_count = len([o for o in today_orders if o.status != 'cancelled'])
+    cancelled_count = len([o for o in today_orders if o.status == 'cancelled'])
+
+    # Last 7 days revenue
+    daily_data = []
+    for i in range(6, -1, -1):
+        day = today - timedelta(days=i)
+        day_start = datetime.combine(day, datetime.min.time())
+        day_end = day_start + timedelta(days=1)
+        orders_day = Order.query.filter(
+            Order.created_at >= day_start,
+            Order.created_at < day_end,
+            Order.status != 'cancelled'
+        ).all()
+        daily_data.append({
+            'date': day.isoformat(),
+            'label': day.strftime('%a'),
+            'revenue': sum(o.total for o in orders_day),
+            'orders': len(orders_day)
+        })
+
+    # Popular items (all time)
+    popular = db.session.query(
+        OrderItem.item_name,
+        func.sum(OrderItem.quantity).label('total_qty'),
+        func.sum(OrderItem.item_price * OrderItem.quantity).label('total_revenue')
+    ).group_by(OrderItem.item_name).order_by(func.sum(OrderItem.quantity).desc()).limit(10).all()
+
+    popular_items = [{'name': p[0], 'quantity': int(p[1]), 'revenue': float(p[2])} for p in popular]
+
+    # Status breakdown today
+    status_counts = {}
+    for o in today_orders:
+        status_counts[o.status] = status_counts.get(o.status, 0) + 1
+
+    return jsonify({
+        'today': {
+            'revenue': today_revenue,
+            'orders': today_count,
+            'cancelled': cancelled_count
+        },
+        'weekly': daily_data,
+        'popular_items': popular_items,
+        'status_breakdown': status_counts
+    })
 
 
 # ─── Boot ─────────────────────────────────────────────────────────────

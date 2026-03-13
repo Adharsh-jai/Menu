@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    La Maison — User-Facing Menu Styles
+   Food-themed with blur effects, floating elements & warm palette
    ═══════════════════════════════════════════════════════════════ */
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -7,13 +8,16 @@
 :root {
     --bg:          #0f0e17;
     --surface:     #1a1928;
-    --glass:       rgba(255,255,255,.04);
+    --glass:       rgba(255,255,255,.05);
     --glass-border:rgba(255,255,255,.08);
+    --glass-strong:rgba(255,255,255,.08);
     --text:        #fffffe;
     --text-muted:  #a7a9be;
     --accent:      #e8a838;
     --accent-glow: rgba(232,168,56,.25);
     --price:       #56e39f;
+    --warm-red:    #e85d4a;
+    --warm-orange: #f0a040;
     --radius:      16px;
     --radius-sm:   10px;
     --font-heading:'Playfair Display', serif;
@@ -40,14 +44,62 @@ body::before {
     z-index: 0;
 }
 
+/* ─── AMBIENT BLUR BLOBS ──────────────────────────────────────── */
+
+.ambient-blobs {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: .15;
+    animation: blobDrift 20s ease-in-out infinite alternate;
+}
+
+.blob-1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, var(--accent), transparent 70%);
+    top: -100px; left: -100px;
+    animation-duration: 18s;
+}
+
+.blob-2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, var(--price), transparent 70%);
+    bottom: -80px; right: -80px;
+    animation-duration: 22s;
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, var(--warm-red), transparent 70%);
+    top: 40%; left: 50%;
+    transform: translateX(-50%);
+    animation-duration: 25s;
+    animation-delay: -10s;
+}
+
+@keyframes blobDrift {
+    0%   { transform: translate(0, 0) scale(1); }
+    33%  { transform: translate(60px, -40px) scale(1.1); }
+    66%  { transform: translate(-40px, 50px) scale(0.95); }
+    100% { transform: translate(30px, 20px) scale(1.05); }
+}
+
 /* ─── HEADER ───────────────────────────────────────────────── */
 
 #site-header {
     position: fixed; top: 0; left: 0; width: 100%;
     z-index: 100;
-    background: rgba(15,14,23,.75);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    background: rgba(15,14,23,.6);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
     border-bottom: 1px solid var(--glass-border);
     padding: 1rem 2rem;
     transition: var(--transition);
@@ -65,7 +117,9 @@ body::before {
     font-size: 1.5rem; font-weight: 700;
     letter-spacing: 1px;
     background: linear-gradient(135deg, var(--accent), #f0c27f);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .tagline {
@@ -77,30 +131,79 @@ body::before {
 
 #hero {
     position: relative;
-    height: 52vh; min-height: 350px;
+    height: 56vh; min-height: 380px;
     display: flex; align-items: center; justify-content: center;
-    background:
-        linear-gradient(160deg, rgba(232,168,56,.12), transparent 50%),
-        radial-gradient(ellipse at 80% 20%, rgba(232,168,56,.1), transparent 60%),
-        var(--bg);
     overflow: hidden;
+}
+
+/* Food background image */
+.hero-bg-img {
+    position: absolute; inset: 0;
+    background: url('/static/uploads/hero_food_bg.png') center/cover no-repeat;
+    opacity: .35;
+    filter: blur(2px);
+    transform: scale(1.05);
+    animation: heroZoom 30s ease-in-out infinite alternate;
+}
+
+@keyframes heroZoom {
+    0%   { transform: scale(1.05); }
+    100% { transform: scale(1.12); }
 }
 
 .hero-overlay {
     position: absolute; inset: 0;
     background:
-        radial-gradient(circle at 30% 70%, rgba(86,227,159,.06) 0%, transparent 50%),
-        radial-gradient(circle at 70% 30%, rgba(232,168,56,.08) 0%, transparent 50%);
+        linear-gradient(to bottom, rgba(15,14,23,.5) 0%, rgba(15,14,23,.3) 40%, rgba(15,14,23,.85) 100%),
+        radial-gradient(circle at 30% 70%, rgba(86,227,159,.08) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(232,168,56,.1) 0%, transparent 50%);
     animation: heroPulse 8s ease-in-out infinite alternate;
 }
 
 @keyframes heroPulse {
-    0%   { opacity: .6; }
+    0%   { opacity: .7; }
     100% { opacity: 1; }
 }
 
+/* ─── FLOATING FOOD EMOJIS ─────────────────────────────────── */
+
+.floating-foods {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.float-item {
+    position: absolute;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    opacity: .25;
+    filter: blur(1px);
+    animation: floatFood 12s ease-in-out infinite alternate;
+    animation-delay: calc(var(--i) * -1.3s);
+}
+
+/* Position each floating food item */
+.float-item:nth-child(1)  { top: 10%; left: 5%; }
+.float-item:nth-child(2)  { top: 20%; right: 8%; }
+.float-item:nth-child(3)  { top: 60%; left: 12%; }
+.float-item:nth-child(4)  { top: 75%; right: 15%; }
+.float-item:nth-child(5)  { top: 30%; left: 80%; }
+.float-item:nth-child(6)  { top: 50%; left: 35%; }
+.float-item:nth-child(7)  { top: 15%; left: 45%; }
+.float-item:nth-child(8)  { top: 70%; left: 65%; }
+.float-item:nth-child(9)  { top: 40%; left: 3%; }
+.float-item:nth-child(10) { top: 85%; right: 5%; }
+
+@keyframes floatFood {
+    0%   { transform: translateY(0) rotate(0deg) scale(1); }
+    25%  { transform: translateY(-15px) rotate(8deg) scale(1.08); }
+    50%  { transform: translateY(8px) rotate(-5deg) scale(0.95); }
+    75%  { transform: translateY(-10px) rotate(3deg) scale(1.05); }
+    100% { transform: translateY(5px) rotate(-3deg) scale(1); }
+}
+
 .hero-content {
-    position: relative; z-index: 1;
+    position: relative; z-index: 2;
     text-align: center; padding: 2rem;
 }
 
@@ -109,8 +212,11 @@ body::before {
     font-size: clamp(2.5rem, 6vw, 4.5rem);
     font-weight: 700;
     background: linear-gradient(135deg, var(--text) 30%, var(--accent));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     margin-bottom: .6rem;
+    text-shadow: none;
 }
 
 .hero-content p {
@@ -138,15 +244,15 @@ body::before {
 
 #searchInput {
     width: 100%; padding: .85rem 2.8rem .85rem 3rem;
-    background: var(--glass);
+    background: var(--glass-strong);
     border: 1px solid var(--glass-border);
     border-radius: 50px;
     color: var(--text);
     font-size: .95rem;
     font-family: var(--font-body);
     outline: none;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
     transition: var(--transition);
 }
 
@@ -155,6 +261,7 @@ body::before {
 #searchInput:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow), 0 8px 30px rgba(0,0,0,.3);
+    background: rgba(255,255,255,.08);
 }
 
 .search-clear {
@@ -172,9 +279,9 @@ body::before {
 
 #category-nav {
     position: sticky; top: 64px; z-index: 90;
-    background: rgba(15,14,23,.8);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(15,14,23,.6);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
     border-bottom: 1px solid var(--glass-border);
     padding: .75rem 2rem;
 }
@@ -263,10 +370,12 @@ body::before {
     cursor: pointer;
     white-space: nowrap;
     transition: var(--transition);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .cat-tab:hover {
-    background: rgba(232,168,56,.1);
+    background: rgba(232,168,56,.12);
     color: var(--accent);
     border-color: rgba(232,168,56,.3);
 }
@@ -305,6 +414,7 @@ body::before {
 .menu-category-title .cat-img {
     width: 38px; height: 38px; border-radius: 10px;
     object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
 }
 
 /* Item grid — default (medium) */
@@ -379,12 +489,13 @@ body::before {
     height: 180px;
 }
 
-/* (large view removed — only list and medium views remain) */
+/* ─── MENU CARDS (glassmorphism) ───────────────────────────── */
 
-/* Single item card */
 .menu-card {
-    background: var(--glass);
-    border: 1px solid var(--glass-border);
+    background: rgba(255,255,255,.04);
+    backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    border: 1px solid rgba(255,255,255,.08);
     border-radius: var(--radius);
     overflow: hidden;
     transition: var(--transition);
@@ -395,7 +506,11 @@ body::before {
 .menu-card:hover {
     transform: translateY(-6px);
     border-color: rgba(232,168,56,.25);
-    box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(232,168,56,.1);
+    box-shadow:
+        0 16px 48px rgba(0,0,0,.4),
+        0 0 0 1px rgba(232,168,56,.12),
+        inset 0 1px 1px rgba(255,255,255,.06);
+    background: rgba(255,255,255,.06);
 }
 
 .menu-card-img {
@@ -403,6 +518,12 @@ body::before {
     object-fit: cover;
     background: var(--surface);
     display: block;
+    transition: var(--transition);
+}
+
+.menu-card:hover .menu-card-img {
+    transform: scale(1.03);
+    filter: brightness(1.1);
 }
 
 .menu-card-body {
@@ -430,6 +551,7 @@ body::before {
 .menu-card-price {
     font-size: 1.2rem; font-weight: 700;
     color: var(--price);
+    text-shadow: 0 0 20px rgba(86,227,159,.15);
 }
 
 .menu-card-badge {
@@ -439,6 +561,8 @@ body::before {
     background: rgba(86,227,159,.12);
     color: var(--price);
     font-weight: 600;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 .menu-card-badge.unavailable {
@@ -471,6 +595,10 @@ body::before {
     border-top: 1px solid var(--glass-border);
     color: var(--text-muted);
     font-size: .8rem;
+    position: relative;
+    background: rgba(15,14,23,.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 /* ─── ANIMATIONS ───────────────────────────────────────────── */
@@ -496,6 +624,13 @@ body::before {
         flex-direction: column;
         gap: .6rem;
     }
+
+    /* Reduce blob sizes on mobile */
+    .blob-1 { width: 300px; height: 300px; }
+    .blob-2 { width: 250px; height: 250px; }
+    .blob-3 { width: 200px; height: 200px; }
+
+    .float-item { opacity: .15; font-size: 1.2rem; }
 
     .items-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
     .items-grid.view-list { grid-template-columns: 1fr; }

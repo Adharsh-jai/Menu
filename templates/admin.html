@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — La Maison Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+
+    <!-- ═══ LOGIN OVERLAY ═══ -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <div class="login-icon">🔐</div>
+            <h2>Admin Login</h2>
+            <p>Enter password to access the dashboard</p>
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Sign In</button>
+                <p class="login-error hidden" id="loginError">Invalid password. Try again.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div id="dashboard" class="dashboard hidden">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-logo">🍽️</span>
+                <h2>La Maison</h2>
+                <span class="sidebar-badge">Admin</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-panel="categories" id="navCategories">
+                    <span class="nav-icon">📂</span> Categories
+                </button>
+                <button class="nav-item" data-panel="items" id="navItems">
+                    <span class="nav-icon">🍕</span> Menu Items
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-ghost btn-full" id="logoutBtn">🚪 Logout</button>
+                <a href="/" class="btn btn-ghost btn-full" style="margin-top:.5rem; text-align:center; display:block;">🌐 View Site</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="main-content">
+
+            <!-- ─── Top bar ─── -->
+            <header class="topbar">
+                <h1 id="panelTitle">Categories</h1>
+                <button class="btn btn-accent" id="addNewBtn">+ Add New</button>
+            </header>
+
+            <!-- ═══ CATEGORIES PANEL ═══ -->
+            <section class="panel" id="panelCategories">
+                <div class="table-wrap">
+                    <table id="categoriesTable">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriesBody"></tbody>
+                    </table>
+                    <p class="empty-table hidden" id="emptyCats">No categories yet. Click <strong>+ Add New</strong> to create one.</p>
+                </div>
+            </section>
+
+            <!-- ═══ ITEMS PANEL ═══ -->
+            <section class="panel hidden" id="panelItems">
+                <div class="table-wrap">
+                    <table id="itemsTable">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsBody"></tbody>
+                    </table>
+                    <p class="empty-table hidden" id="emptyItems">No menu items yet. Click <strong>+ Add New</strong> to create one.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ═══ MODAL ═══ -->
+    <div id="modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Category</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="modalForm" enctype="multipart/form-data">
+                <div id="modalFields">
+                    <!-- dynamic fields injected by JS -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" id="modalCancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="modalSubmit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══ TOAST ═══ -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>

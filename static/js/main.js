@@ -5,16 +5,17 @@
 (function () {
     'use strict';
 
-    const categoryTabs  = document.getElementById('categoryTabs');
-    const menuContainer = document.getElementById('menuContainer');
-    const emptyState    = document.getElementById('emptyState');
-    const viewSwitcher  = document.getElementById('viewSwitcher');
-    const searchInput   = document.getElementById('searchInput');
-    const searchClear   = document.getElementById('searchClear');
+    const categoryTabs     = document.getElementById('categoryTabs');
+    const categoryDropdown = document.getElementById('categoryDropdown');
+    const menuContainer    = document.getElementById('menuContainer');
+    const emptyState       = document.getElementById('emptyState');
+    const viewSwitcher     = document.getElementById('viewSwitcher');
+    const searchInput      = document.getElementById('searchInput');
+    const searchClear      = document.getElementById('searchClear');
 
     let allCategories = [];
     let activeFilter  = 'all';
-    let currentView   = 'list'; // 'list' | 'medium' | 'large'
+    let currentView   = 'list'; // 'list' | 'medium'
     let searchQuery   = '';
 
     // ─── Search ──────────────────────────────────────────────
@@ -60,7 +61,7 @@
     // ─── Build category tabs ─────────────────────────────────
 
     function buildTabs() {
-        // keep the "All" button, clear the rest
+        // ─── Tabs (desktop) ─────────────────────────────────
         categoryTabs.innerHTML = '<button class="cat-tab active" data-cat="all">All</button>';
         allCategories.forEach(cat => {
             const btn = document.createElement('button');
@@ -76,6 +77,26 @@
             document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
             activeFilter = tab.dataset.cat;
+            // sync dropdown
+            categoryDropdown.value = activeFilter;
+            renderMenu();
+        });
+
+        // ─── Dropdown (mobile) ──────────────────────────────
+        categoryDropdown.innerHTML = '<option value="all">All Categories</option>';
+        allCategories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat.id;
+            opt.textContent = cat.name;
+            categoryDropdown.appendChild(opt);
+        });
+
+        categoryDropdown.addEventListener('change', () => {
+            activeFilter = categoryDropdown.value;
+            // sync tabs
+            document.querySelectorAll('.cat-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.cat === activeFilter);
+            });
             renderMenu();
         });
     }

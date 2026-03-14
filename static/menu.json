@@ -3,14 +3,14 @@
         "id": 3,
         "name": "Appetizers",
         "description": "Starters and small bites",
-        "image": "./static/uploads/3ad2332da0e3a5c6b70966256775fa8b_1773419982.jpg",
+        "image": "./static/uploads/3ad2332da0e3a5c6b70966256775fa8b.jpg",
         "items": [
             {
                 "id": 4,
                 "name": "Bruschetta",
                 "description": "Toasted bread with tomatoes and basil",
                 "price": 250.0,
-                "image": "./static/uploads/Bruschetta-RCSQ_1773419750.jpg",
+                "image": "./static/uploads/Bruschetta-RCSQ.jpg",
                 "is_available": true,
                 "category_id": 3,
                 "category_name": "Appetizers"
@@ -20,7 +20,7 @@
                 "name": "Spring Rolls",
                 "description": "Crispy vegetable rolls",
                 "price": 180.0,
-                "image": "./static/uploads/3ad2332da0e3a5c6b70966256775fa8b_1773419703.jpg",
+                "image": "./static/uploads/3ad2332da0e3a5c6b70966256775fa8b.jpg",
                 "is_available": true,
                 "category_id": 3,
                 "category_name": "Appetizers"
@@ -31,14 +31,14 @@
         "id": 1,
         "name": "Non Veg",
         "description": "",
-        "image": "./static/uploads/international-eat-an-apple-day-instagram-post-design-template-a9c556e2f64babacbc96db23f2fddff1_screen_1773420011.jpg",
+        "image": "./static/uploads/international-eat-an-apple-day-instagram-post-design-template-a9c556e2f64babacbc96db23f2fddff1_screen.jpg",
         "items": [
             {
                 "id": 1,
                 "name": "Chicken tikka",
                 "description": "indian",
                 "price": 200.0,
-                "image": "./static/uploads/Chicken-Tikka-1-scaled_1773419613.jpg",
+                "image": "./static/uploads/Chicken-Tikka-1-scaled.jpg",
                 "is_available": true,
                 "category_id": 1,
                 "category_name": "Non Veg"
@@ -49,14 +49,14 @@
         "id": 2,
         "name": "drinks",
         "description": "",
-        "image": "./static/uploads/download_1773420004.jpg",
+        "image": "./static/uploads/download.jpg",
         "items": [
             {
                 "id": 2,
                 "name": "grape juice",
                 "description": "grape",
                 "price": 80.0,
-                "image": "./static/uploads/download_1773419888.jpg",
+                "image": "./static/uploads/download.jpg",
                 "is_available": false,
                 "category_id": 2,
                 "category_name": "drinks"
@@ -66,7 +66,7 @@
                 "name": "apple",
                 "description": "",
                 "price": 80.0,
-                "image": "./static/uploads/international-eat-an-apple-day-instagram-post-design-template-a9c556e2f64babacbc96db23f2fddff1_screen_1773419786.jpg",
+                "image": "./static/uploads/international-eat-an-apple-day-instagram-post-design-template-a9c556e2f64babacbc96db23f2fddff1_screen.jpg",
                 "is_available": true,
                 "category_id": 2,
                 "category_name": "drinks"

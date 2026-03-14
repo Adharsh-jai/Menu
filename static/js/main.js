@@ -5,18 +5,18 @@
 (function () {
     'use strict';
 
-    const categoryTabs     = document.getElementById('categoryTabs');
+    const categoryTabs = document.getElementById('categoryTabs');
     const categoryDropdown = document.getElementById('categoryDropdown');
-    const menuContainer    = document.getElementById('menuContainer');
-    const emptyState       = document.getElementById('emptyState');
-    const viewSwitcher     = document.getElementById('viewSwitcher');
-    const searchInput      = document.getElementById('searchInput');
-    const searchClear      = document.getElementById('searchClear');
+    const menuContainer = document.getElementById('menuContainer');
+    const emptyState = document.getElementById('emptyState');
+    const viewSwitcher = document.getElementById('viewSwitcher');
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
 
     let allCategories = [];
-    let activeFilter  = 'all';
-    let currentView   = 'list'; // 'list' | 'medium'
-    let searchQuery   = '';
+    let activeFilter = 'all';
+    let currentView = 'list'; // 'list' | 'medium'
+    let searchQuery = '';
 
     // ─── Search ──────────────────────────────────────────────
 
@@ -48,7 +48,7 @@
 
     async function loadMenu() {
         try {
-            const res = await fetch('/api/menu');
+            const res = await fetch('./static/menu.json');
             allCategories = await res.json();
             buildTabs();
             renderMenu();

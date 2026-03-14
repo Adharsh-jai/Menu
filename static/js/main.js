@@ -164,8 +164,8 @@
                         <div class="menu-card-name">${escHtml(item.name)}</div>
                         <div class="menu-card-desc">${escHtml(item.description)}</div>
                         <div class="menu-card-footer">
-                            <span class="menu-card-price">₹${Number(item.price).toFixed(2)}</span>
                             ${availBadge}
+                            <span class="menu-card-price">₹${Number(item.price).toFixed(2)}</span>
                         </div>
                     </div>`;
                 grid.appendChild(card);
